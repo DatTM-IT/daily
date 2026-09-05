@@ -12,6 +12,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
+  <!-- Firebase SDKs (CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
   <style>
     :root {
       --bg: #f8fafc;
@@ -63,18 +68,24 @@
       100% { background-position: 200% center; }
     }
 
+    /* Header & Thanh Auth */
     .hero-header {
       background: var(--card-bg);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--card-border);
       border-radius: 24px;
-      padding: 20px 22px;
+      padding: 18px 20px;
       margin-bottom: 16px;
       box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.04);
     }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
     .hero-header h1 {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 800;
       line-height: 1.25;
     }
@@ -86,6 +97,35 @@
       text-transform: capitalize;
     }
 
+    /* Nút Đăng nhập & Avatar */
+    .auth-btn {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    }
+    .auth-btn:active { transform: scale(0.95); }
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid #38bdf8;
+    }
+
+    /* Bảng xếp hạng */
     .leaderboard-card {
       background: var(--card-bg);
       backdrop-filter: blur(16px);
@@ -152,6 +192,7 @@
       border: 1px dashed var(--ice);
     }
 
+    /* Card chủ đề */
     .card { 
       background: #ffffff; 
       border: 1px solid var(--card-border); 
@@ -181,7 +222,6 @@
 
     .header-actions { display: flex; align-items: center; gap: 6px; }
     
-    /* Nút thêm nhiệm vụ nhỏ gọn trong card */
     .btn-add-task {
       background: #eff6ff;
       color: #0284c7;
@@ -244,7 +284,6 @@
     .task-item.completed .task-name-pill { text-decoration: line-through; color: #94a3b8; background: #f8fafc; border-color: #e2e8f0; }
     .task-item.completed .target-badge { opacity: 0.5; }
     
-    /* Nút 3 chấm tuỳ chọn nhiệm vụ */
     .btn-more {
       background: none;
       border: none;
@@ -290,7 +329,12 @@
 <body>
 
   <header class="hero-header">
-    <h1><span class="rainbow-shimmer">⚡ Theo dõi Chuỗi Mục tiêu</span></h1>
+    <div class="header-top">
+      <h1><span class="rainbow-shimmer">⚡ Theo dõi Chuỗi Mục tiêu</span></h1>
+      <div id="authContainer">
+        <button class="auth-btn" onclick="loginGoogle()">Đăng nhập</button>
+      </div>
+    </div>
     <div class="date-str" id="currentDate"></div>
   </header>
 
@@ -307,6 +351,25 @@
   <button class="fab-btn" title="Thêm chủ đề mới" onclick="promptAddTopic()">+</button>
 
   <script>
+    // --- 1. CẤU HÌNH FIREBASE ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyCf2UU60vwjb8my6Hw6y6S4a6-VbK5rwFc",
+      authDomain: "daily-a9522.firebaseapp.com",
+      projectId: "daily-a9522",
+      storageBucket: "daily-a9522.firebasestorage.app",
+      messagingSenderId: "438646081063",
+      appId: "1:438646081063:web:76098b937679eb45f37002",
+      measurementId: "G-YMMWP41KN7"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let currentUser = null;
+    let unsubscribeSnapshot = null;
+
+    // --- 2. QUẢN LÝ DỮ LIỆU & STATE ---
     function getDiffDays(dateStr1, dateStr2) {
       if (!dateStr1 || !dateStr2) return 999;
       const d1 = new Date(dateStr1);
@@ -338,11 +401,79 @@
       }
     }
 
+    // Tự động lưu: Vừa lưu localStorage (để dùng offline), vừa đồng bộ Cloud nếu đã đăng nhập
     function saveData() {
       localStorage.setItem('habit_user_topics_v2', JSON.stringify(state));
       localStorage.setItem('habit_last_active_day_v2', lastActiveDay);
+
+      if (currentUser) {
+        db.collection("users").doc(currentUser.uid).set({
+          topics: state,
+          lastActiveDay: lastActiveDay,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+      }
     }
 
+    // --- 3. ĐỒNG BỘ TÀI KHOẢN GOOGLE ---
+    auth.onAuthStateChanged(user => {
+      currentUser = user;
+      const authBox = document.getElementById('authContainer');
+
+      if (user) {
+        authBox.innerHTML = `
+          <div class="user-profile">
+            <img src="${user.photoURL || 'https://via.placeholder.com/32'}" class="user-avatar" title="${user.displayName}">
+            <button class="btn-icon" title="Đăng xuất" onclick="logoutGoogle()">🚪</button>
+          </div>
+        `;
+
+        // Lắng nghe dữ liệu Realtime từ Cloud
+        if (unsubscribeSnapshot) unsubscribeSnapshot();
+        unsubscribeSnapshot = db.collection("users").doc(user.uid).onSnapshot(doc => {
+          if (doc.exists) {
+            const data = doc.data();
+            if (data.topics) {
+              state = data.topics;
+              lastActiveDay = data.lastActiveDay || getTodayStr();
+              localStorage.setItem('habit_user_topics_v2', JSON.stringify(state));
+              localStorage.setItem('habit_last_active_day_v2', lastActiveDay);
+              checkDailyReset();
+              render();
+            }
+          } else {
+            // Lần đầu đăng nhập thì đẩy dữ liệu đang có trên máy lên Cloud
+            saveData();
+          }
+        });
+      } else {
+        authBox.innerHTML = `<button class="auth-btn" onclick="loginGoogle()">Đăng nhập</button>`;
+        if (unsubscribeSnapshot) {
+          unsubscribeSnapshot();
+          unsubscribeSnapshot = null;
+        }
+      }
+    });
+
+    function loginGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch(err => {
+        // Hỗ trợ trường hợp Safari chặn Popup thì dùng Redirect
+        if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
+          auth.signInWithRedirect(provider);
+        } else {
+          alert("Lỗi đăng nhập: " + err.message);
+        }
+      });
+    }
+
+    function logoutGoogle() {
+      if (confirm("Bạn có muốn đăng xuất không?")) {
+        auth.signOut();
+      }
+    }
+
+    // --- 4. CÁC TÁC VỤ VỚI TOPIC & NHIỆM VỤ ---
     function promptAddTopic() {
       const name = prompt("Nhập tên chủ đề mới (VD: Sức khỏe, Luyện code, Tiếng Anh...):");
       if (name !== null && name.trim() !== "") {
@@ -376,7 +507,6 @@
       }
     }
 
-    // Thêm nhiệm vụ nhanh qua nút +
     function promptAddTask(topicId) {
       const name = prompt("1/3. Tên việc cần làm (VD: Hít đất, Chạy bộ, Luyện C++):");
       if (!name || !name.trim()) return;
@@ -405,7 +535,6 @@
       render();
     }
 
-    // Menu tuỳ chọn 3 chấm gọn gàng cho từng nhiệm vụ
     function openTaskMenu(topicId, taskId) {
       const topic = state.find(t => t.id === topicId);
       const task = topic.tasks.find(t => t.id === taskId);
