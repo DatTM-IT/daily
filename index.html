@@ -20,8 +20,8 @@
   <style>
     :root {
       --bg: #f8fafc;
-      --card-bg: rgba(255, 255, 255, 0.9);
-      --card-border: rgba(226, 232, 240, 0.85);
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --card-border: rgba(226, 232, 240, 0.9);
       --text: #0f172a;
       --muted: #64748b;
       --primary: #0ea5e9;
@@ -30,6 +30,11 @@
       --success: #10b981;
       --warning: #f59e0b;
       --danger: #f43f5e;
+      
+      /* Hiệu ứng chiều sâu đa tầng */
+      --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.03);
+      --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 20px 35px -8px rgba(15, 23, 42, 0.08), 0 10px 15px -5px rgba(15, 23, 42, 0.05);
     }
 
     * { 
@@ -41,7 +46,7 @@
     }
 
     body { 
-      background: radial-gradient(circle at top right, #f1f5f9 0%, #f8fafc 100%);
+      background: radial-gradient(circle at 10% 0%, #e2e8f0 0%, #f1f5f9 45%, #f8fafc 100%);
       color: var(--text); 
       padding: env(safe-area-inset-top, 24px) 16px calc(env(safe-area-inset-bottom, 24px) + 75px) 16px; 
       min-height: 100vh; 
@@ -50,17 +55,17 @@
     .rainbow-shimmer {
       background: linear-gradient(
         120deg, 
-        #6366f1 0%, 
-        #ec4899 25%, 
-        #f59e0b 50%, 
-        #10b981 75%, 
-        #06b6d4 100%
+        #818cf8 0%, 
+        #f472b6 25%, 
+        #fbbf24 50%, 
+        #34d399 75%, 
+        #38bdf8 100%
       );
       background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       animation: rainbowFlow 5s linear infinite;
-      filter: drop-shadow(0 2px 8px rgba(99, 102, 241, 0.15));
+      filter: drop-shadow(0 2px 10px rgba(244, 114, 182, 0.3));
       letter-spacing: -0.03em;
     }
 
@@ -69,39 +74,59 @@
       100% { background-position: 200% center; }
     }
 
+    /* CARD TIÊU ĐỀ ĐẦU - MIDNIGHT OBSIDIAN CAO CẤP */
     .hero-header {
-      background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 18px 20px;
+      background: linear-gradient(145deg, #090d16 0%, #111827 70%, #1e1b4b 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 26px;
+      padding: 20px 22px;
       margin-bottom: 16px;
-      box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.04);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 20px 40px -10px rgba(15, 23, 42, 0.45),
+        0 1px 0 1px rgba(255, 255, 255, 0.1) inset;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hero-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 70%);
+      pointer-events: none;
     }
     .header-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: relative;
+      z-index: 1;
     }
     .hero-header h1 {
-      font-size: 1.35rem;
-      font-weight: 800;
+      font-size: 1.38rem;
+      font-weight: 900;
       line-height: 1.25;
     }
     .hero-header .date-str {
-      color: var(--muted);
+      color: #94a3b8;
       font-size: 0.82rem;
       font-weight: 600;
       margin-top: 6px;
       text-transform: capitalize;
+      position: relative;
+      z-index: 1;
     }
 
     .auth-btn {
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      color: #0f172a;
-      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      padding: 7px 14px;
       border-radius: 20px;
       font-size: 0.8rem;
       font-weight: 700;
@@ -109,8 +134,10 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      transition: all 0.15s ease;
     }
+    .auth-btn:hover { background: rgba(255, 255, 255, 0.2); }
     .auth-btn:active { transform: scale(0.95); }
     .user-profile {
       display: flex;
@@ -118,71 +145,84 @@
       gap: 8px;
     }
     .user-avatar {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       border: 2px solid #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
     }
 
+    /* CARD THÀNH TỰU - VÀNG ÁNH KIM LUXURY */
     .leaderboard-card {
-      background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(253, 224, 71, 0.4);
-      border-radius: 22px;
-      padding: 16px 18px;
+      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 40%, #fef9c3 100%);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 24px;
+      padding: 18px 20px;
       margin-bottom: 22px;
-      box-shadow: 0 12px 28px -8px rgba(245, 158, 11, 0.08);
+      position: relative;
+      box-shadow: 
+        0 18px 36px -10px rgba(217, 119, 6, 0.18),
+        0 1px 0 1px rgba(255, 255, 255, 0.8) inset;
+      transition: transform 0.2s ease;
     }
     .leaderboard-title {
-      font-size: 0.95rem;
+      font-size: 0.98rem;
       font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
+      color: #92400e;
     }
     .leaderboard-list {
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 8px;
     }
     .leaderboard-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 10px 14px;
-      background: #ffffff;
-      border: 1px solid rgba(226, 232, 240, 0.8);
-      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-radius: 15px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s ease;
+    }
+    .leaderboard-item:hover {
+      transform: translateX(3px);
     }
     .rank-left {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-weight: 700;
-      color: #1e293b;
+      font-weight: 800;
+      color: #78350f;
       font-size: 0.88rem;
     }
     .rank-pos {
-      font-size: 1rem;
-      width: 22px;
+      font-size: 1.05rem;
+      width: 24px;
       text-align: center;
     }
 
     .streak-badge { 
-      padding: 4px 10px; 
+      padding: 5px 12px; 
       border-radius: 20px; 
-      font-weight: 700; 
+      font-weight: 800; 
       font-size: 0.82rem; 
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
+      box-shadow: var(--shadow-sm);
     }
     .streak-badge.active {
-      background: #fff7ed; 
+      background: #ffffff; 
       color: var(--fire); 
-      border: 1px solid #ffedd5;
+      border: 1px solid #fed7aa;
     }
     .streak-badge.frozen {
       background: #f1f5f9; 
@@ -190,13 +230,21 @@
       border: 1px dashed var(--ice);
     }
 
+    /* CARD CHỦ ĐỀ VÀ NHIỆM VỤ CÓ CHIỀU SÂU */
     .card { 
-      background: #ffffff; 
+      background: var(--card-bg); 
       border: 1px solid var(--card-border); 
-      border-radius: 22px; 
-      padding: 18px; 
-      margin-bottom: 18px; 
-      box-shadow: 0 8px 24px -6px rgba(15, 23, 42, 0.03); 
+      border-radius: 24px; 
+      padding: 18px 20px; 
+      margin-bottom: 20px; 
+      box-shadow: 
+        var(--shadow-md),
+        0 1px 0 1px rgba(255, 255, 255, 1) inset;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg), 0 1px 0 1px rgba(255, 255, 255, 1) inset;
     }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .topic-title-row { display: flex; align-items: center; gap: 8px; flex: 1; margin-right: 8px; }
@@ -208,7 +256,7 @@
       border-radius: 12px;
       font-size: 1.02rem;
       font-weight: 800;
-      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
       border: 1px solid #334155;
       display: inline-block;
       max-width: 80%;
@@ -223,53 +271,58 @@
       background: #eff6ff;
       color: #0284c7;
       border: 1px solid #bae6fd;
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 700;
       line-height: 1;
+      box-shadow: var(--shadow-sm);
     }
     .btn-add-task:active { transform: scale(0.92); }
 
-    .btn-icon { background: none; border: none; color: #94a3b8; font-size: 0.95rem; cursor: pointer; padding: 4px 6px; border-radius: 8px; }
+    .btn-icon { background: none; border: none; color: #94a3b8; font-size: 0.95rem; cursor: pointer; padding: 5px 7px; border-radius: 8px; }
     .btn-icon:hover { color: var(--text); background: #f1f5f9; }
     .btn-icon.delete:hover { color: var(--danger); }
 
-    .task-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px; }
+    .task-list { display: flex; flex-direction: column; gap: 9px; margin-bottom: 6px; }
     .task-item { 
       display: flex; 
       align-items: center; 
       justify-content: space-between; 
       background: #ffffff; 
       border: 1px solid #e2e8f0; 
-      padding: 10px 12px; 
-      border-radius: 14px; 
+      padding: 11px 13px; 
+      border-radius: 15px; 
       gap: 8px; 
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
-      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.18s ease;
+    }
+    .task-item:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
     }
     .task-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; flex-wrap: wrap; }
     
-    /* Ô tick 2 bước chống nhầm */
     .custom-check-btn {
-      width: 24px;
-      height: 24px;
-      border-radius: 7px;
+      width: 25px;
+      height: 25px;
+      border-radius: 8px;
       border: 2px solid #cbd5e1;
       background: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       font-weight: 900;
       user-select: none;
       transition: all 0.15s ease;
+      box-shadow: var(--shadow-sm);
     }
     .custom-check-btn.confirming {
       border-color: var(--warning);
@@ -285,7 +338,7 @@
 
     @keyframes pulse {
       from { transform: scale(1); }
-      to { transform: scale(1.1); }
+      to { transform: scale(1.08); }
     }
 
     .confirm-hint {
@@ -294,25 +347,27 @@
       color: #d97706;
       background: #fffbeb;
       border: 1px solid #fde68a;
-      padding: 2px 6px;
+      padding: 3px 7px;
       border-radius: 6px;
+      box-shadow: var(--shadow-sm);
     }
 
     .task-name-pill {
       background: #f1f5f9;
       color: #0f172a;
       border: 1px solid #cbd5e1;
-      padding: 4px 10px;
-      border-radius: 8px;
+      padding: 5px 11px;
+      border-radius: 9px;
       font-size: 0.88rem;
       font-weight: 700;
       word-break: break-word;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
     }
 
     .target-badge { 
       background: #eff6ff; 
       color: #2563eb; 
-      padding: 3px 9px; 
+      padding: 4px 10px; 
       border-radius: 8px; 
       font-weight: 800; 
       font-size: 0.8rem; 
@@ -320,18 +375,21 @@
       display: inline-flex;
       align-items: center;
       gap: 3px;
+      box-shadow: 0 1px 2px rgba(37, 99, 235, 0.05);
     }
     
     .task-item.completed {
       background: #f8fafc;
+      box-shadow: none;
     }
     .task-item.completed .task-name-pill { 
       text-decoration: line-through; 
       color: #94a3b8; 
       background: #f1f5f9; 
       border-color: #e2e8f0; 
+      box-shadow: none;
     }
-    .task-item.completed .target-badge { opacity: 0.5; }
+    .task-item.completed .target-badge { opacity: 0.45; box-shadow: none; }
     
     .btn-more {
       background: none;
@@ -346,29 +404,33 @@
     }
     .btn-more:hover { color: var(--text); background: #f1f5f9; }
     
-    .status-msg { font-size: 0.78rem; font-weight: 600; margin-top: 8px; color: var(--muted); text-align: right; }
-    .empty-state { text-align: center; color: var(--muted); padding: 50px 16px; border: 1.5px dashed #cbd5e1; border-radius: 22px; margin-bottom: 20px; font-size: 0.92rem; font-weight: 500; line-height: 1.6; background: #ffffff; }
+    .status-msg { font-size: 0.78rem; font-weight: 600; margin-top: 10px; color: var(--muted); text-align: right; }
+    .empty-state { text-align: center; color: var(--muted); padding: 50px 16px; border: 1.5px dashed #cbd5e1; border-radius: 24px; margin-bottom: 20px; font-size: 0.92rem; font-weight: 500; line-height: 1.6; background: #ffffff; box-shadow: var(--shadow-sm); }
     
     .fab-btn {
       position: fixed;
       right: 20px;
       bottom: calc(env(safe-area-inset-bottom, 20px) + 16px);
-      width: 56px;
-      height: 56px;
+      width: 58px;
+      height: 58px;
       border-radius: 50%;
       background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
       color: #ffffff;
       border: none;
-      font-size: 2rem;
+      font-size: 2.1rem;
       font-weight: 300;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.4);
       cursor: pointer;
       z-index: 100;
       user-select: none;
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .fab-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px rgba(37, 99, 235, 0.45);
     }
     .fab-btn:active {
       transform: scale(0.92);
@@ -389,8 +451,8 @@
 
   <div class="leaderboard-card" id="leaderboardSection" style="display: none;">
     <div class="leaderboard-title">
-      <span class="rainbow-shimmer">🏆 Bảng Xếp Hạng Chuỗi</span>
-      <span style="font-size: 0.75rem; color: var(--muted); font-weight: 600;">Top Chuỗi Dài Nhất</span>
+      <span style="font-weight: 900; letter-spacing: -0.01em;">🏆 Bảng Xếp Hạng Chuỗi</span>
+      <span style="font-size: 0.75rem; color: #b45309; font-weight: 700;">Top Dẫn Đầu</span>
     </div>
     <div class="leaderboard-list" id="leaderboardList"></div>
   </div>
@@ -416,8 +478,6 @@
 
     let currentUser = null;
     let unsubscribeSnapshot = null;
-
-    // Biến lưu trạng thái đang chờ xác nhận của từng nhiệm vụ (tránh nhầm)
     let pendingConfirmTaskId = null;
 
     function getDiffDays(dateStr1, dateStr2) {
@@ -471,8 +531,8 @@
       if (user) {
         authBox.innerHTML = `
           <div class="user-profile">
-            <img src="${user.photoURL || 'https://via.placeholder.com/32'}" class="user-avatar" title="${user.displayName}">
-            <button class="btn-icon" title="Đăng xuất" onclick="logoutGoogle()">🚪</button>
+            <img src="${user.photoURL || 'https://via.placeholder.com/34'}" class="user-avatar" title="${user.displayName}">
+            <button class="btn-icon" style="color: #cbd5e1;" title="Đăng xuất" onclick="logoutGoogle()">🚪</button>
           </div>
         `;
 
@@ -611,12 +671,10 @@
       }
     }
 
-    // XỬ LÝ TICK 2 LẦN ĐỂ CHỐT HOÀN THÀNH
     function handleTaskClick(topicId, taskId) {
       const topic = state.find(t => t.id === topicId);
       const task = topic.tasks.find(t => t.id === taskId);
 
-      // Nếu đã hoàn thành rồi, bấm vào sẽ bỏ tích luôn
       if (task.done) {
         task.done = false;
         pendingConfirmTaskId = null;
@@ -625,9 +683,7 @@
         return;
       }
 
-      // Nếu chưa tích:
       if (pendingConfirmTaskId === taskId) {
-        // Lần chạm thứ 2 -> CHỐT HOÀN THÀNH
         task.done = true;
         pendingConfirmTaskId = null;
 
@@ -648,7 +704,6 @@
         saveData();
         render();
       } else {
-        // Lần chạm thứ 1 -> Đưa vào trạng thái chờ xác nhận
         pendingConfirmTaskId = taskId;
         render();
       }
