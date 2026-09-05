@@ -28,6 +28,7 @@
       --fire: #f97316;
       --ice: #94a3b8;
       --success: #10b981;
+      --warning: #f59e0b;
       --danger: #f43f5e;
     }
 
@@ -68,7 +69,6 @@
       100% { background-position: 200% center; }
     }
 
-    /* Header & Thanh Auth */
     .hero-header {
       background: var(--card-bg);
       backdrop-filter: blur(16px);
@@ -97,7 +97,6 @@
       text-transform: capitalize;
     }
 
-    /* Nút Đăng nhập & Avatar */
     .auth-btn {
       background: #ffffff;
       border: 1px solid #cbd5e1;
@@ -125,7 +124,6 @@
       border: 2px solid #38bdf8;
     }
 
-    /* Bảng xếp hạng */
     .leaderboard-card {
       background: var(--card-bg);
       backdrop-filter: blur(16px);
@@ -192,7 +190,6 @@
       border: 1px dashed var(--ice);
     }
 
-    /* Card chủ đề */
     .card { 
       background: #ffffff; 
       border: 1px solid var(--card-border); 
@@ -254,9 +251,53 @@
       border-radius: 14px; 
       gap: 8px; 
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+      transition: all 0.2s ease;
     }
     .task-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; flex-wrap: wrap; }
     
+    /* Ô tick 2 bước chống nhầm */
+    .custom-check-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      border: 2px solid #cbd5e1;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 900;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+    .custom-check-btn.confirming {
+      border-color: var(--warning);
+      background: #fef3c7;
+      color: #d97706;
+      animation: pulse 1s infinite alternate;
+    }
+    .custom-check-btn.checked {
+      border-color: var(--success);
+      background: var(--success);
+      color: #ffffff;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.1); }
+    }
+
+    .confirm-hint {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #d97706;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
     .task-name-pill {
       background: #f1f5f9;
       color: #0f172a;
@@ -280,8 +321,16 @@
       align-items: center;
       gap: 3px;
     }
-    .task-item input[type="checkbox"] { width: 20px; height: 20px; min-width: 20px; accent-color: var(--success); cursor: pointer; border-radius: 6px; }
-    .task-item.completed .task-name-pill { text-decoration: line-through; color: #94a3b8; background: #f8fafc; border-color: #e2e8f0; }
+    
+    .task-item.completed {
+      background: #f8fafc;
+    }
+    .task-item.completed .task-name-pill { 
+      text-decoration: line-through; 
+      color: #94a3b8; 
+      background: #f1f5f9; 
+      border-color: #e2e8f0; 
+    }
     .task-item.completed .target-badge { opacity: 0.5; }
     
     .btn-more {
@@ -351,7 +400,6 @@
   <button class="fab-btn" title="Thêm chủ đề mới" onclick="promptAddTopic()">+</button>
 
   <script>
-    // --- 1. CẤU HÌNH FIREBASE ---
     const firebaseConfig = {
       apiKey: "AIzaSyCf2UU60vwjb8my6Hw6y6S4a6-VbK5rwFc",
       authDomain: "daily-a9522.firebaseapp.com",
@@ -369,7 +417,9 @@
     let currentUser = null;
     let unsubscribeSnapshot = null;
 
-    // --- 2. QUẢN LÝ DỮ LIỆU & STATE ---
+    // Biến lưu trạng thái đang chờ xác nhận của từng nhiệm vụ (tránh nhầm)
+    let pendingConfirmTaskId = null;
+
     function getDiffDays(dateStr1, dateStr2) {
       if (!dateStr1 || !dateStr2) return 999;
       const d1 = new Date(dateStr1);
@@ -401,7 +451,6 @@
       }
     }
 
-    // Tự động lưu: Vừa lưu localStorage (để dùng offline), vừa đồng bộ Cloud nếu đã đăng nhập
     function saveData() {
       localStorage.setItem('habit_user_topics_v2', JSON.stringify(state));
       localStorage.setItem('habit_last_active_day_v2', lastActiveDay);
@@ -415,7 +464,6 @@
       }
     }
 
-    // --- 3. ĐỒNG BỘ TÀI KHOẢN GOOGLE ---
     auth.onAuthStateChanged(user => {
       currentUser = user;
       const authBox = document.getElementById('authContainer');
@@ -428,7 +476,6 @@
           </div>
         `;
 
-        // Lắng nghe dữ liệu Realtime từ Cloud
         if (unsubscribeSnapshot) unsubscribeSnapshot();
         unsubscribeSnapshot = db.collection("users").doc(user.uid).onSnapshot(doc => {
           if (doc.exists) {
@@ -442,7 +489,6 @@
               render();
             }
           } else {
-            // Lần đầu đăng nhập thì đẩy dữ liệu đang có trên máy lên Cloud
             saveData();
           }
         });
@@ -458,7 +504,6 @@
     function loginGoogle() {
       const provider = new firebase.auth.GoogleAuthProvider();
       auth.signInWithPopup(provider).catch(err => {
-        // Hỗ trợ trường hợp Safari chặn Popup thì dùng Redirect
         if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
           auth.signInWithRedirect(provider);
         } else {
@@ -473,7 +518,6 @@
       }
     }
 
-    // --- 4. CÁC TÁC VỤ VỚI TOPIC & NHIỆM VỤ ---
     function promptAddTopic() {
       const name = prompt("Nhập tên chủ đề mới (VD: Sức khỏe, Luyện code, Tiếng Anh...):");
       if (name !== null && name.trim() !== "") {
@@ -567,28 +611,47 @@
       }
     }
 
-    function toggleTask(topicId, taskId) {
+    // XỬ LÝ TICK 2 LẦN ĐỂ CHỐT HOÀN THÀNH
+    function handleTaskClick(topicId, taskId) {
       const topic = state.find(t => t.id === topicId);
       const task = topic.tasks.find(t => t.id === taskId);
-      task.done = !task.done;
 
-      const allDone = topic.tasks.length > 0 && topic.tasks.every(t => t.done);
-      const today = getTodayStr();
-
-      if (allDone) {
-        if (topic.lastCompletedDate !== today) {
-          const daysSinceLast = topic.lastCompletedDate ? getDiffDays(topic.lastCompletedDate, today) : 999;
-          
-          if (daysSinceLast === 1 || daysSinceLast === 2) {
-            topic.streak += 1;
-          } else {
-            topic.streak = 1;
-          }
-          topic.lastCompletedDate = today;
-        }
+      // Nếu đã hoàn thành rồi, bấm vào sẽ bỏ tích luôn
+      if (task.done) {
+        task.done = false;
+        pendingConfirmTaskId = null;
+        saveData();
+        render();
+        return;
       }
-      saveData();
-      render();
+
+      // Nếu chưa tích:
+      if (pendingConfirmTaskId === taskId) {
+        // Lần chạm thứ 2 -> CHỐT HOÀN THÀNH
+        task.done = true;
+        pendingConfirmTaskId = null;
+
+        const allDone = topic.tasks.length > 0 && topic.tasks.every(t => t.done);
+        const today = getTodayStr();
+
+        if (allDone) {
+          if (topic.lastCompletedDate !== today) {
+            const daysSinceLast = topic.lastCompletedDate ? getDiffDays(topic.lastCompletedDate, today) : 999;
+            if (daysSinceLast === 1 || daysSinceLast === 2) {
+              topic.streak += 1;
+            } else {
+              topic.streak = 1;
+            }
+            topic.lastCompletedDate = today;
+          }
+        }
+        saveData();
+        render();
+      } else {
+        // Lần chạm thứ 1 -> Đưa vào trạng thái chờ xác nhận
+        pendingConfirmTaskId = taskId;
+        render();
+      }
     }
 
     function getStreakStatus(topic) {
@@ -660,18 +723,35 @@
 
         const status = getStreakStatus(topic);
 
-        const tasksHtml = topic.tasks.map(t => `
-          <div class="task-item ${t.done ? 'completed' : ''}">
-            <div class="task-left" onclick="toggleTask('${topic.id}', '${t.id}')">
-              <input type="checkbox" ${t.done ? 'checked' : ''} onclick="event.stopPropagation(); toggleTask('${topic.id}', '${t.id}')">
-              <span class="task-name-pill">${t.name}</span>
-              <span class="target-badge">
-                ${t.targetValue} ${t.unit}
-              </span>
+        const tasksHtml = topic.tasks.map(t => {
+          const isPending = (pendingConfirmTaskId === t.id && !t.done);
+          let checkClass = "";
+          let checkIcon = "";
+
+          if (t.done) {
+            checkClass = "checked";
+            checkIcon = "✓";
+          } else if (isPending) {
+            checkClass = "confirming";
+            checkIcon = "?";
+          }
+
+          return `
+            <div class="task-item ${t.done ? 'completed' : ''}">
+              <div class="task-left" onclick="handleTaskClick('${topic.id}', '${t.id}')">
+                <div class="custom-check-btn ${checkClass}">
+                  ${checkIcon}
+                </div>
+                <span class="task-name-pill">${t.name}</span>
+                <span class="target-badge">
+                  ${t.targetValue} ${t.unit}
+                </span>
+                ${isPending ? `<span class="confirm-hint">Chạm lần nữa để chốt!</span>` : ''}
+              </div>
+              <button class="btn-more" title="Tuỳ chọn" onclick="openTaskMenu('${topic.id}', '${t.id}')">⋯</button>
             </div>
-            <button class="btn-more" title="Tuỳ chọn" onclick="openTaskMenu('${topic.id}', '${t.id}')">⋯</button>
-          </div>
-        `).join('');
+          `;
+        }).join('');
 
         card.innerHTML = `
           <div class="card-header">
