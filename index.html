@@ -206,6 +206,7 @@
       align-items: center;
       gap: 5px;
       box-shadow: var(--shadow-sm);
+      user-select: none;
     }
     .streak-badge.active {
       background: #ffffff; 
@@ -276,7 +277,6 @@
     .btn-icon:hover { color: var(--text); background: #f1f5f9; }
     .btn-icon.delete:hover { color: var(--danger); }
 
-    /* Thanh tiến độ và tỉ lệ % */
     .progress-section {
       margin-bottom: 14px;
     }
@@ -581,6 +581,7 @@
           name: name.trim(),
           streak: 0,
           lastCompletedDate: null,
+          prevCompletedDate: null,
           tasks: []
         });
         saveData();
@@ -666,14 +667,25 @@
       }
     }
 
-    // XỬ LÝ TICK 2 LẦN & TÍNH CHUỖI KHI CÓ ÍT NHẤT 1 NHIỆM VỤ XONG
+    // TÍNH NĂNG HOÀN TÁC CHUỖI TỰ ĐỘNG KHI BỎ TICK HẾT
     function handleTaskClick(topicId, taskId) {
       const topic = state.find(t => t.id === topicId);
       const task = topic.tasks.find(t => t.id === taskId);
+      const today = getTodayStr();
 
       if (task.done) {
         task.done = false;
         pendingConfirmTaskId = null;
+
+        // Nếu trong ngày hôm nay không còn nhiệm vụ nào xong -> hoàn tác lại ngày và chuỗi
+        const anyDoneLeft = topic.tasks.some(t => t.done);
+        if (!anyDoneLeft && topic.lastCompletedDate === today) {
+          if (topic.streak > 0) {
+            topic.streak -= 1;
+          }
+          topic.lastCompletedDate = topic.prevCompletedDate || null;
+        }
+
         saveData();
         render();
         return;
@@ -683,11 +695,10 @@
         task.done = true;
         pendingConfirmTaskId = null;
 
-        const today = getTodayStr();
         const anyDone = topic.tasks.some(t => t.done);
 
-        // Chỉ cần có ít nhất 1 nhiệm vụ hoàn thành là tính chuỗi cho ngày hôm nay
         if (anyDone && topic.lastCompletedDate !== today) {
+          topic.prevCompletedDate = topic.lastCompletedDate;
           const daysSinceLast = topic.lastCompletedDate ? getDiffDays(topic.lastCompletedDate, today) : 999;
           if (daysSinceLast === 1 || daysSinceLast === 2) {
             topic.streak += 1;
@@ -812,7 +823,9 @@
               <button class="btn-icon" title="Đổi tên chủ đề" onclick="editTopicName('${topic.id}')">✏️</button>
             </div>
             <div class="header-actions">
-              <div class="streak-badge ${status.badgeClass}">${status.text}</div>
+              <div class="streak-badge ${status.badgeClass}">
+                ${status.text}
+              </div>
               <button class="btn-add-task" title="Thêm nhiệm vụ" onclick="promptAddTask('${topic.id}')">+</button>
               <button class="btn-icon delete" title="Xoá chủ đề" onclick="deleteTopic('${topic.id}')">🗑</button>
             </div>
