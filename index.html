@@ -9,7 +9,7 @@
   <title>Habit Tracker</title>
   <style>
     :root {
-      --bg: #0f172a;
+      --bg: #0b1120;
       --card: #1e293b;
       --text: #f8fafc;
       --muted: #94a3b8;
@@ -23,13 +23,48 @@
     body { 
       background: var(--bg); 
       color: var(--text); 
-      padding: env(safe-area-inset-top, 20px) 16px calc(env(safe-area-inset-bottom, 20px) + 70px) 16px; 
+      padding: env(safe-area-inset-top, 20px) 16px calc(env(safe-area-inset-bottom, 20px) + 75px) 16px; 
       min-height: 100vh; 
     }
-    header { margin-bottom: 20px; padding-top: 10px; }
-    h1 { font-size: 1.5rem; font-weight: 700; }
-    .date-str { color: var(--muted); font-size: 0.85rem; margin-top: 4px; text-transform: capitalize; }
-    
+
+    /* Nền nổi bật cho cụm Tiêu đề & Ngày tháng */
+    .hero-header {
+      background: linear-gradient(135deg, #1e293b 0%, #0f2744 100%);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 20px;
+      padding: 18px 20px;
+      margin-bottom: 22px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 15px rgba(56, 189, 248, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-header::after {
+      content: "";
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-header h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hero-header .date-str {
+      color: #93c5fd;
+      font-size: 0.88rem;
+      font-weight: 500;
+      margin-top: 6px;
+      text-transform: capitalize;
+    }
+
     .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .topic-title-row { display: flex; align-items: center; gap: 8px; flex: 1; margin-right: 8px; }
@@ -90,15 +125,16 @@
 </head>
 <body>
 
-  <header>
-    <h1>Theo dõi Chuỗi Mục tiêu</h1>
+  <!-- Khối Tiêu đề & Ngày tháng có nền nổi bật -->
+  <header class="hero-header">
+    <h1>⚡ Theo dõi Chuỗi Mục tiêu</h1>
     <div class="date-str" id="currentDate"></div>
   </header>
 
   <!-- Danh sách các Chủ đề -->
   <div id="topicsContainer"></div>
 
-  <!-- Nút + thêm chủ đề dạng nổi góc dưới màn hình -->
+  <!-- Nút + thêm chủ đề -->
   <button class="fab-btn" title="Thêm chủ đề mới" onclick="promptAddTopic()">+</button>
 
   <script>
@@ -131,7 +167,6 @@
       localStorage.setItem('habit_last_active_day_v2', lastActiveDay);
     }
 
-    // Nhập tên chủ đề qua nút +
     function promptAddTopic() {
       const name = prompt("Nhập tên chủ đề mới (VD: Sức khỏe, Luyện code, Tiếng Anh...):");
       if (name !== null && name.trim() !== "") {
