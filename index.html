@@ -31,7 +31,6 @@
       --warning: #f59e0b;
       --danger: #f43f5e;
       
-      /* Hiệu ứng chiều sâu đa tầng */
       --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.03);
       --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
       --shadow-lg: 0 20px 35px -8px rgba(15, 23, 42, 0.08), 0 10px 15px -5px rgba(15, 23, 42, 0.05);
@@ -74,7 +73,6 @@
       100% { background-position: 200% center; }
     }
 
-    /* CARD TIÊU ĐỀ ĐẦU - MIDNIGHT OBSIDIAN CAO CẤP */
     .hero-header {
       background: linear-gradient(145deg, #090d16 0%, #111827 70%, #1e1b4b 100%);
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -86,7 +84,6 @@
       box-shadow: 
         0 20px 40px -10px rgba(15, 23, 42, 0.45),
         0 1px 0 1px rgba(255, 255, 255, 0.1) inset;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .hero-header::before {
       content: '';
@@ -135,9 +132,7 @@
       align-items: center;
       gap: 6px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-      transition: all 0.15s ease;
     }
-    .auth-btn:hover { background: rgba(255, 255, 255, 0.2); }
     .auth-btn:active { transform: scale(0.95); }
     .user-profile {
       display: flex;
@@ -152,18 +147,15 @@
       box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
     }
 
-    /* CARD THÀNH TỰU - VÀNG ÁNH KIM LUXURY */
     .leaderboard-card {
       background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 40%, #fef9c3 100%);
       border: 1px solid rgba(245, 158, 11, 0.35);
       border-radius: 24px;
       padding: 18px 20px;
       margin-bottom: 22px;
-      position: relative;
       box-shadow: 
         0 18px 36px -10px rgba(217, 119, 6, 0.18),
         0 1px 0 1px rgba(255, 255, 255, 0.8) inset;
-      transition: transform 0.2s ease;
     }
     .leaderboard-title {
       font-size: 0.98rem;
@@ -190,10 +182,6 @@
       border: 1px solid rgba(245, 158, 11, 0.25);
       border-radius: 15px;
       box-shadow: var(--shadow-sm);
-      transition: transform 0.15s ease;
-    }
-    .leaderboard-item:hover {
-      transform: translateX(3px);
     }
     .rank-left {
       display: flex;
@@ -230,7 +218,6 @@
       border: 1px dashed var(--ice);
     }
 
-    /* CARD CHỦ ĐỀ VÀ NHIỆM VỤ CÓ CHIỀU SÂU */
     .card { 
       background: var(--card-bg); 
       border: 1px solid var(--card-border); 
@@ -246,7 +233,7 @@
       transform: translateY(-2px);
       box-shadow: var(--shadow-lg), 0 1px 0 1px rgba(255, 255, 255, 1) inset;
     }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .topic-title-row { display: flex; align-items: center; gap: 8px; flex: 1; margin-right: 8px; }
 
     .topic-card-badge {
@@ -289,6 +276,31 @@
     .btn-icon:hover { color: var(--text); background: #f1f5f9; }
     .btn-icon.delete:hover { color: var(--danger); }
 
+    /* Thanh tiến độ và tỉ lệ % */
+    .progress-section {
+      margin-bottom: 14px;
+    }
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+    .progress-bar-bg {
+      height: 7px;
+      background: #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #0ea5e9 0%, #10b981 100%);
+      transition: width 0.35s ease;
+    }
+
     .task-list { display: flex; flex-direction: column; gap: 9px; margin-bottom: 6px; }
     .task-item { 
       display: flex; 
@@ -301,10 +313,6 @@
       gap: 8px; 
       box-shadow: var(--shadow-sm);
       transition: all 0.18s ease;
-    }
-    .task-item:hover {
-      border-color: #cbd5e1;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
     }
     .task-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; flex-wrap: wrap; }
     
@@ -321,7 +329,6 @@
       font-size: 0.8rem;
       font-weight: 900;
       user-select: none;
-      transition: all 0.15s ease;
       box-shadow: var(--shadow-sm);
     }
     .custom-check-btn.confirming {
@@ -349,7 +356,6 @@
       border: 1px solid #fde68a;
       padding: 3px 7px;
       border-radius: 6px;
-      box-shadow: var(--shadow-sm);
     }
 
     .task-name-pill {
@@ -361,7 +367,6 @@
       font-size: 0.88rem;
       font-weight: 700;
       word-break: break-word;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
     }
 
     .target-badge { 
@@ -375,7 +380,6 @@
       display: inline-flex;
       align-items: center;
       gap: 3px;
-      box-shadow: 0 1px 2px rgba(37, 99, 235, 0.05);
     }
     
     .task-item.completed {
@@ -387,9 +391,8 @@
       color: #94a3b8; 
       background: #f1f5f9; 
       border-color: #e2e8f0; 
-      box-shadow: none;
     }
-    .task-item.completed .target-badge { opacity: 0.45; box-shadow: none; }
+    .task-item.completed .target-badge { opacity: 0.45; }
     
     .btn-more {
       background: none;
@@ -400,12 +403,11 @@
       cursor: pointer;
       padding: 4px 8px;
       border-radius: 8px;
-      line-height: 1;
     }
     .btn-more:hover { color: var(--text); background: #f1f5f9; }
     
     .status-msg { font-size: 0.78rem; font-weight: 600; margin-top: 10px; color: var(--muted); text-align: right; }
-    .empty-state { text-align: center; color: var(--muted); padding: 50px 16px; border: 1.5px dashed #cbd5e1; border-radius: 24px; margin-bottom: 20px; font-size: 0.92rem; font-weight: 500; line-height: 1.6; background: #ffffff; box-shadow: var(--shadow-sm); }
+    .empty-state { text-align: center; color: var(--muted); padding: 50px 16px; border: 1.5px dashed #cbd5e1; border-radius: 24px; margin-bottom: 20px; font-size: 0.92rem; font-weight: 500; line-height: 1.6; background: #ffffff; }
     
     .fab-btn {
       position: fixed;
@@ -426,15 +428,8 @@
       cursor: pointer;
       z-index: 100;
       user-select: none;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .fab-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 16px 32px rgba(37, 99, 235, 0.45);
-    }
-    .fab-btn:active {
-      transform: scale(0.92);
-    }
+    .fab-btn:active { transform: scale(0.92); }
   </style>
 </head>
 <body>
@@ -671,6 +666,7 @@
       }
     }
 
+    // XỬ LÝ TICK 2 LẦN & TÍNH CHUỖI KHI CÓ ÍT NHẤT 1 NHIỆM VỤ XONG
     function handleTaskClick(topicId, taskId) {
       const topic = state.find(t => t.id === topicId);
       const task = topic.tasks.find(t => t.id === taskId);
@@ -687,20 +683,20 @@
         task.done = true;
         pendingConfirmTaskId = null;
 
-        const allDone = topic.tasks.length > 0 && topic.tasks.every(t => t.done);
         const today = getTodayStr();
+        const anyDone = topic.tasks.some(t => t.done);
 
-        if (allDone) {
-          if (topic.lastCompletedDate !== today) {
-            const daysSinceLast = topic.lastCompletedDate ? getDiffDays(topic.lastCompletedDate, today) : 999;
-            if (daysSinceLast === 1 || daysSinceLast === 2) {
-              topic.streak += 1;
-            } else {
-              topic.streak = 1;
-            }
-            topic.lastCompletedDate = today;
+        // Chỉ cần có ít nhất 1 nhiệm vụ hoàn thành là tính chuỗi cho ngày hôm nay
+        if (anyDone && topic.lastCompletedDate !== today) {
+          const daysSinceLast = topic.lastCompletedDate ? getDiffDays(topic.lastCompletedDate, today) : 999;
+          if (daysSinceLast === 1 || daysSinceLast === 2) {
+            topic.streak += 1;
+          } else {
+            topic.streak = 1;
           }
+          topic.lastCompletedDate = today;
         }
+
         saveData();
         render();
       } else {
@@ -771,8 +767,9 @@
       }
 
       state.forEach(topic => {
-        const hasTasks = topic.tasks.length > 0;
-        const isAllDone = hasTasks && topic.tasks.every(t => t.done);
+        const totalTasks = topic.tasks.length;
+        const doneTasks = topic.tasks.filter(t => t.done).length;
+        const percent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
         const card = document.createElement('div');
         card.className = 'card';
 
@@ -821,12 +818,24 @@
             </div>
           </div>
 
+          ${totalTasks > 0 ? `
+            <div class="progress-section">
+              <div class="progress-info">
+                <span>Tiến độ: ${doneTasks}/${totalTasks} hoàn thành</span>
+                <span>${percent}%</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: ${percent}%;"></div>
+              </div>
+            </div>
+          ` : ''}
+
           <div class="task-list">
-            ${hasTasks ? tasksHtml : '<div style="color: var(--muted); font-size: 0.85rem; padding: 4px 0;">Chưa có việc nào. Bấm nút <b>+</b> bên trên để thêm!</div>'}
+            ${totalTasks > 0 ? tasksHtml : '<div style="color: var(--muted); font-size: 0.85rem; padding: 4px 0;">Chưa có việc nào. Bấm nút <b>+</b> bên trên để thêm!</div>'}
           </div>
 
           <div class="status-msg">
-            ${isAllDone ? "✅ Đã hoàn thành tất cả mục tiêu hôm nay!" : (status.isFrozen ? "⚠️ Chuỗi đang bị đóng băng xám! Hãy hoàn thành để cứu." : (hasTasks ? "Chưa xong hết các mục tiêu" : "Hãy thêm nhiệm vụ để tính chuỗi"))}
+            ${doneTasks > 0 ? (percent === 100 ? "🌟 Hoàn hảo! Đã xong 100% mục tiêu hôm nay." : `🔥 Chuỗi đã được giữ vững! (${percent}% hoàn thành)`) : (status.isFrozen ? "⚠️ Chuỗi đang bị đóng băng xám! Hoàn thành ít nhất 1 việc để cứu." : (totalTasks > 0 ? "Chưa có việc nào xong hôm nay" : "Hãy thêm nhiệm vụ để tính chuỗi"))}
           </div>
         `;
         container.appendChild(card);
