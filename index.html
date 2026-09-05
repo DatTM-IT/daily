@@ -4,119 +4,283 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Habits">
   <title>Habit Tracker</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg: #0b1120;
-      --card: #1e293b;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --primary: #38bdf8;
+      --bg: #f8fafc;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --card-border: rgba(226, 232, 240, 0.85);
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #0ea5e9;
       --fire: #f97316;
-      --success: #22c55e;
-      --danger: #ef4444;
-      --border: #334155;
+      --ice: #94a3b8;
+      --success: #10b981;
+      --danger: #f43f5e;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
     body { 
-      background: var(--bg); 
+      background: radial-gradient(circle at top right, #f1f5f9 0%, #f8fafc 100%);
       color: var(--text); 
-      padding: env(safe-area-inset-top, 20px) 16px calc(env(safe-area-inset-bottom, 20px) + 75px) 16px; 
+      padding: env(safe-area-inset-top, 24px) 16px calc(env(safe-area-inset-bottom, 24px) + 75px) 16px; 
       min-height: 100vh; 
     }
 
-    /* Nền nổi bật cho cụm Tiêu đề & Ngày tháng */
-    .hero-header {
-      background: linear-gradient(135deg, #1e293b 0%, #0f2744 100%);
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      border-radius: 20px;
-      padding: 18px 20px;
-      margin-bottom: 22px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 15px rgba(56, 189, 248, 0.08);
-      position: relative;
-      overflow: hidden;
+    .rainbow-shimmer {
+      background: linear-gradient(
+        120deg, 
+        #6366f1 0%, 
+        #ec4899 25%, 
+        #f59e0b 50%, 
+        #10b981 75%, 
+        #06b6d4 100%
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: rainbowFlow 5s linear infinite;
+      filter: drop-shadow(0 2px 8px rgba(99, 102, 241, 0.15));
+      letter-spacing: -0.03em;
     }
-    .hero-header::after {
-      content: "";
-      position: absolute;
-      top: -30px;
-      right: -30px;
-      width: 100px;
-      height: 100px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, transparent 70%);
-      pointer-events: none;
+
+    @keyframes rainbowFlow {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .hero-header {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 20px 22px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.04);
     }
     .hero-header h1 {
-      font-size: 1.45rem;
+      font-size: 1.4rem;
       font-weight: 800;
-      letter-spacing: -0.02em;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      line-height: 1.25;
     }
     .hero-header .date-str {
-      color: #93c5fd;
-      font-size: 0.88rem;
-      font-weight: 500;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 600;
       margin-top: 6px;
       text-transform: capitalize;
     }
 
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .leaderboard-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(253, 224, 71, 0.4);
+      border-radius: 22px;
+      padding: 16px 18px;
+      margin-bottom: 22px;
+      box-shadow: 0 12px 28px -8px rgba(245, 158, 11, 0.08);
+    }
+    .leaderboard-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: 14px;
+    }
+    .rank-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      color: #1e293b;
+      font-size: 0.88rem;
+    }
+    .rank-pos {
+      font-size: 1rem;
+      width: 22px;
+      text-align: center;
+    }
+
+    .streak-badge { 
+      padding: 4px 10px; 
+      border-radius: 20px; 
+      font-weight: 700; 
+      font-size: 0.82rem; 
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .streak-badge.active {
+      background: #fff7ed; 
+      color: var(--fire); 
+      border: 1px solid #ffedd5;
+    }
+    .streak-badge.frozen {
+      background: #f1f5f9; 
+      color: var(--ice);
+      border: 1px dashed var(--ice);
+    }
+
+    .card { 
+      background: #ffffff; 
+      border: 1px solid var(--card-border); 
+      border-radius: 22px; 
+      padding: 18px; 
+      margin-bottom: 18px; 
+      box-shadow: 0 8px 24px -6px rgba(15, 23, 42, 0.03); 
+    }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .topic-title-row { display: flex; align-items: center; gap: 8px; flex: 1; margin-right: 8px; }
-    .topic-name { font-size: 1.15rem; font-weight: 600; }
-    .header-actions { display: flex; align-items: center; gap: 8px; }
-    .streak-badge { background: rgba(249, 115, 22, 0.15); color: var(--fire); padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; white-space: nowrap; }
+
+    .topic-card-badge {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 6px 14px;
+      border-radius: 12px;
+      font-size: 1.02rem;
+      font-weight: 800;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
+      border: 1px solid #334155;
+      display: inline-block;
+      max-width: 80%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .header-actions { display: flex; align-items: center; gap: 6px; }
     
-    .btn-icon { background: none; border: none; color: var(--muted); font-size: 0.95rem; cursor: pointer; padding: 4px 6px; border-radius: 6px; }
-    .btn-icon:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    /* Nút thêm nhiệm vụ nhỏ gọn trong card */
+    .btn-add-task {
+      background: #eff6ff;
+      color: #0284c7;
+      border: 1px solid #bae6fd;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .btn-add-task:active { transform: scale(0.92); }
+
+    .btn-icon { background: none; border: none; color: #94a3b8; font-size: 0.95rem; cursor: pointer; padding: 4px 6px; border-radius: 8px; }
+    .btn-icon:hover { color: var(--text); background: #f1f5f9; }
     .btn-icon.delete:hover { color: var(--danger); }
 
-    .task-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
-    .task-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); padding: 10px 12px; border-radius: 10px; gap: 8px; }
-    .task-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-    .task-text { word-break: break-word; font-size: 0.95rem; }
-    .target-badge { background: rgba(56, 189, 248, 0.15); color: var(--primary); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; }
-    .task-item input[type="checkbox"] { width: 20px; height: 20px; min-width: 20px; accent-color: var(--success); cursor: pointer; }
-    .task-item.completed .task-text { text-decoration: line-through; color: var(--muted); }
-    .task-item.completed .target-badge { opacity: 0.6; }
+    .task-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px; }
+    .task-item { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      background: #ffffff; 
+      border: 1px solid #e2e8f0; 
+      padding: 10px 12px; 
+      border-radius: 14px; 
+      gap: 8px; 
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+    }
+    .task-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; flex-wrap: wrap; }
     
-    .task-actions { display: flex; align-items: center; gap: 2px; }
+    .task-name-pill {
+      background: #f1f5f9;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      word-break: break-word;
+    }
 
-    .add-task-form { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
-    .inputs-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 6px; }
-    .input-box { background: rgba(0,0,0,0.25); border: 1px solid var(--border); color: var(--text); padding: 9px 10px; border-radius: 10px; font-size: 0.88rem; outline: none; width: 100%; }
-    .input-box:focus { border-color: var(--primary); }
-    .btn-submit-task { background: var(--border); color: var(--text); border: none; padding: 10px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.88rem; }
+    .target-badge { 
+      background: #eff6ff; 
+      color: #2563eb; 
+      padding: 3px 9px; 
+      border-radius: 8px; 
+      font-weight: 800; 
+      font-size: 0.8rem; 
+      border: 1px solid #bfdbfe;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .task-item input[type="checkbox"] { width: 20px; height: 20px; min-width: 20px; accent-color: var(--success); cursor: pointer; border-radius: 6px; }
+    .task-item.completed .task-name-pill { text-decoration: line-through; color: #94a3b8; background: #f8fafc; border-color: #e2e8f0; }
+    .task-item.completed .target-badge { opacity: 0.5; }
     
-    .status-msg { font-size: 0.8rem; margin-top: 10px; color: var(--muted); text-align: right; }
-    .empty-state { text-align: center; color: var(--muted); padding: 60px 16px; border: 1px dashed var(--border); border-radius: 16px; margin-bottom: 20px; font-size: 0.95rem; line-height: 1.6; }
+    /* Nút 3 chấm tuỳ chọn nhiệm vụ */
+    .btn-more {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      line-height: 1;
+    }
+    .btn-more:hover { color: var(--text); background: #f1f5f9; }
     
-    /* Nút + nổi ở góc màn hình */
+    .status-msg { font-size: 0.78rem; font-weight: 600; margin-top: 8px; color: var(--muted); text-align: right; }
+    .empty-state { text-align: center; color: var(--muted); padding: 50px 16px; border: 1.5px dashed #cbd5e1; border-radius: 22px; margin-bottom: 20px; font-size: 0.92rem; font-weight: 500; line-height: 1.6; background: #ffffff; }
+    
     .fab-btn {
       position: fixed;
       right: 20px;
-      bottom: calc(env(safe-area-inset-bottom, 20px) + 15px);
-      width: 54px;
-      height: 54px;
+      bottom: calc(env(safe-area-inset-bottom, 20px) + 16px);
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
-      background: var(--primary);
-      color: #0f172a;
+      background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+      color: #ffffff;
       border: none;
       font-size: 2rem;
       font-weight: 300;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.4);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
       cursor: pointer;
       z-index: 100;
       user-select: none;
-      transition: transform 0.1s ease;
+      transition: transform 0.15s ease;
     }
     .fab-btn:active {
       transform: scale(0.92);
@@ -125,25 +289,33 @@
 </head>
 <body>
 
-  <!-- Khối Tiêu đề & Ngày tháng có nền nổi bật -->
   <header class="hero-header">
-    <h1>⚡ Theo dõi Chuỗi Mục tiêu</h1>
+    <h1><span class="rainbow-shimmer">⚡ Theo dõi Chuỗi Mục tiêu</span></h1>
     <div class="date-str" id="currentDate"></div>
   </header>
 
-  <!-- Danh sách các Chủ đề -->
+  <div class="leaderboard-card" id="leaderboardSection" style="display: none;">
+    <div class="leaderboard-title">
+      <span class="rainbow-shimmer">🏆 Bảng Xếp Hạng Chuỗi</span>
+      <span style="font-size: 0.75rem; color: var(--muted); font-weight: 600;">Top Chuỗi Dài Nhất</span>
+    </div>
+    <div class="leaderboard-list" id="leaderboardList"></div>
+  </div>
+
   <div id="topicsContainer"></div>
 
-  <!-- Nút + thêm chủ đề -->
   <button class="fab-btn" title="Thêm chủ đề mới" onclick="promptAddTopic()">+</button>
 
   <script>
+    function getDiffDays(dateStr1, dateStr2) {
+      if (!dateStr1 || !dateStr2) return 999;
+      const d1 = new Date(dateStr1);
+      const d2 = new Date(dateStr2);
+      const diffTime = Math.abs(d2 - d1);
+      return Math.round(diffTime / (1000 * 60 * 60 * 24));
+    }
+
     const getTodayStr = () => new Date().toISOString().split('T')[0];
-    const getYesterdayStr = () => {
-      const d = new Date();
-      d.setDate(d.getDate() - 1);
-      return d.toISOString().split('T')[0];
-    };
 
     let state = JSON.parse(localStorage.getItem('habit_user_topics_v2')) || [];
     let lastActiveDay = localStorage.getItem('habit_last_active_day_v2') || getTodayStr();
@@ -153,8 +325,12 @@
       if (lastActiveDay !== today) {
         state.forEach(topic => {
           topic.tasks.forEach(t => t.done = false);
-          if (topic.lastCompletedDate && topic.lastCompletedDate < getYesterdayStr()) {
-            topic.streak = 0;
+
+          if (topic.lastCompletedDate) {
+            const daysSinceLast = getDiffDays(topic.lastCompletedDate, today);
+            if (daysSinceLast > 2) {
+              topic.streak = 0;
+            }
           }
         });
         lastActiveDay = today;
@@ -200,24 +376,28 @@
       }
     }
 
-    function addTask(event, topicId) {
-      event.preventDefault();
-      const nameInput = document.getElementById(`name_${topicId}`);
-      const valInput = document.getElementById(`val_${topicId}`);
-      const unitInput = document.getElementById(`unit_${topicId}`);
+    // Thêm nhiệm vụ nhanh qua nút +
+    function promptAddTask(topicId) {
+      const name = prompt("1/3. Tên việc cần làm (VD: Hít đất, Chạy bộ, Luyện C++):");
+      if (!name || !name.trim()) return;
 
-      const name = nameInput.value.trim();
-      const targetValue = parseFloat(valInput.value.trim());
-      const unit = unitInput.value.trim();
+      const valInput = prompt(`2/3. Số lượng mục tiêu cho "${name.trim()}":`, "10");
+      if (valInput === null) return;
+      const targetValue = parseFloat(valInput.trim());
+      if (isNaN(targetValue) || targetValue <= 0) {
+        alert("Số lượng không hợp lệ!");
+        return;
+      }
 
-      if (!name || isNaN(targetValue) || !unit) return;
+      const unit = prompt(`3/3. Đơn vị tính (VD: cái, km, bài, phút):`, "cái");
+      if (!unit || !unit.trim()) return;
 
       const topic = state.find(t => t.id === topicId);
       topic.tasks.push({
         id: 'task_' + Date.now(),
-        name: name,
+        name: name.trim(),
         targetValue: targetValue,
-        unit: unit,
+        unit: unit.trim(),
         done: false
       });
 
@@ -225,28 +405,37 @@
       render();
     }
 
-    function editTaskTarget(topicId, taskId) {
+    // Menu tuỳ chọn 3 chấm gọn gàng cho từng nhiệm vụ
+    function openTaskMenu(topicId, taskId) {
       const topic = state.find(t => t.id === topicId);
       const task = topic.tasks.find(t => t.id === taskId);
-      const input = prompt(`Cập nhật số lượng mới cho "${task.name}" (${task.unit}):`, task.targetValue);
       
-      if (input !== null) {
-        const newVal = parseFloat(input.trim());
-        if (!isNaN(newVal) && newVal > 0) {
-          task.targetValue = newVal;
+      const choice = prompt(
+        `Tuỳ chọn cho "${task.name}":\n` +
+        `1. Thay đổi số lượng (${task.targetValue} -> mới)\n` +
+        `2. Xoá nhiệm vụ này\n\n` +
+        `Nhập số 1 hoặc 2:`, "1"
+      );
+
+      if (choice === "1") {
+        const input = prompt(`Nhập số lượng mới cho "${task.name}" (${task.unit}):`, task.targetValue);
+        if (input !== null) {
+          const newVal = parseFloat(input.trim());
+          if (!isNaN(newVal) && newVal > 0) {
+            task.targetValue = newVal;
+            saveData();
+            render();
+          } else {
+            alert("Số không hợp lệ!");
+          }
+        }
+      } else if (choice === "2") {
+        if (confirm(`Bạn có chắc muốn xoá "${task.name}"?`)) {
+          topic.tasks = topic.tasks.filter(t => t.id !== taskId);
           saveData();
           render();
-        } else {
-          alert("Vui lòng nhập một số hợp lệ!");
         }
       }
-    }
-
-    function deleteTask(topicId, taskId) {
-      const topic = state.find(t => t.id === topicId);
-      topic.tasks = topic.tasks.filter(t => t.id !== taskId);
-      saveData();
-      render();
     }
 
     function toggleTask(topicId, taskId) {
@@ -259,7 +448,9 @@
 
       if (allDone) {
         if (topic.lastCompletedDate !== today) {
-          if (topic.lastCompletedDate === getYesterdayStr()) {
+          const daysSinceLast = topic.lastCompletedDate ? getDiffDays(topic.lastCompletedDate, today) : 999;
+          
+          if (daysSinceLast === 1 || daysSinceLast === 2) {
             topic.streak += 1;
           } else {
             topic.streak = 1;
@@ -271,7 +462,55 @@
       render();
     }
 
+    function getStreakStatus(topic) {
+      const today = getTodayStr();
+      if (!topic.lastCompletedDate || topic.streak === 0) {
+        return { isFrozen: false, text: `🔥 ${topic.streak} ngày`, badgeClass: "active" };
+      }
+
+      const daysSinceLast = getDiffDays(topic.lastCompletedDate, today);
+
+      if (daysSinceLast === 0 || daysSinceLast === 1) {
+        return { isFrozen: false, text: `🔥 ${topic.streak} ngày`, badgeClass: "active" };
+      } else if (daysSinceLast === 2) {
+        return { isFrozen: true, text: `❄️ ${topic.streak} ngày (Cần cứu)`, badgeClass: "frozen" };
+      } else {
+        return { isFrozen: false, text: `🔥 0 ngày`, badgeClass: "active" };
+      }
+    }
+
+    function renderLeaderboard() {
+      const leaderboardCard = document.getElementById('leaderboardSection');
+      const leaderboardList = document.getElementById('leaderboardList');
+
+      if (state.length === 0) {
+        leaderboardCard.style.display = 'none';
+        return;
+      }
+
+      leaderboardCard.style.display = 'block';
+
+      const sortedTopics = [...state].sort((a, b) => b.streak - a.streak);
+      const medals = ['🥇', '🥈', '🥉'];
+
+      leaderboardList.innerHTML = sortedTopics.map((t, idx) => {
+        const rankDisplay = idx < 3 ? medals[idx] : `#${idx + 1}`;
+        const status = getStreakStatus(t);
+        return `
+          <div class="leaderboard-item">
+            <div class="rank-left">
+              <span class="rank-pos">${rankDisplay}</span>
+              <span>${t.name}</span>
+            </div>
+            <div class="streak-badge ${status.badgeClass}">${status.text}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
     function render() {
+      renderLeaderboard();
+
       const container = document.getElementById('topicsContainer');
       container.innerHTML = '';
 
@@ -290,48 +529,40 @@
         const card = document.createElement('div');
         card.className = 'card';
 
+        const status = getStreakStatus(topic);
+
         const tasksHtml = topic.tasks.map(t => `
           <div class="task-item ${t.done ? 'completed' : ''}">
             <div class="task-left" onclick="toggleTask('${topic.id}', '${t.id}')">
               <input type="checkbox" ${t.done ? 'checked' : ''} onclick="event.stopPropagation(); toggleTask('${topic.id}', '${t.id}')">
-              <span class="task-text">${t.name}:</span>
-              <span class="target-badge" title="Chạm để đổi số lượng" onclick="event.stopPropagation(); editTaskTarget('${topic.id}', '${t.id}')">
-                ${t.targetValue} ${t.unit} ✏️
+              <span class="task-name-pill">${t.name}</span>
+              <span class="target-badge">
+                ${t.targetValue} ${t.unit}
               </span>
             </div>
-            <div class="task-actions">
-              <button class="btn-icon delete" title="Xoá nhiệm vụ" onclick="deleteTask('${topic.id}', '${t.id}')">✕</button>
-            </div>
+            <button class="btn-more" title="Tuỳ chọn" onclick="openTaskMenu('${topic.id}', '${t.id}')">⋯</button>
           </div>
         `).join('');
 
         card.innerHTML = `
           <div class="card-header">
             <div class="topic-title-row">
-              <div class="topic-name">${topic.name}</div>
+              <div class="topic-card-badge">${topic.name}</div>
               <button class="btn-icon" title="Đổi tên chủ đề" onclick="editTopicName('${topic.id}')">✏️</button>
             </div>
             <div class="header-actions">
-              <div class="streak-badge">🔥 ${topic.streak} ngày</div>
+              <div class="streak-badge ${status.badgeClass}">${status.text}</div>
+              <button class="btn-add-task" title="Thêm nhiệm vụ" onclick="promptAddTask('${topic.id}')">+</button>
               <button class="btn-icon delete" title="Xoá chủ đề" onclick="deleteTopic('${topic.id}')">🗑</button>
             </div>
           </div>
 
           <div class="task-list">
-            ${hasTasks ? tasksHtml : '<div style="color: var(--muted); font-size: 0.85rem; padding: 4px 0;">Chưa có nhiệm vụ nào.</div>'}
+            ${hasTasks ? tasksHtml : '<div style="color: var(--muted); font-size: 0.85rem; padding: 4px 0;">Chưa có việc nào. Bấm nút <b>+</b> bên trên để thêm!</div>'}
           </div>
 
-          <form class="add-task-form" onsubmit="addTask(event, '${topic.id}')">
-            <div class="inputs-grid">
-              <input type="text" id="name_${topic.id}" class="input-box" placeholder="Tên việc (VD: Chạy bộ)" required>
-              <input type="number" step="any" id="val_${topic.id}" class="input-box" placeholder="Số (VD: 2)" required>
-              <input type="text" id="unit_${topic.id}" class="input-box" placeholder="Đơn vị (km)" required>
-            </div>
-            <button type="submit" class="btn-submit-task">+ Thêm nhiệm vụ</button>
-          </form>
-
           <div class="status-msg">
-            ${isAllDone ? "✅ Đã hoàn thành tất cả mục tiêu hôm nay!" : (hasTasks ? "Chưa xong hết các mục tiêu" : "Hãy thêm nhiệm vụ để tính chuỗi")}
+            ${isAllDone ? "✅ Đã hoàn thành tất cả mục tiêu hôm nay!" : (status.isFrozen ? "⚠️ Chuỗi đang bị đóng băng xám! Hãy hoàn thành để cứu." : (hasTasks ? "Chưa xong hết các mục tiêu" : "Hãy thêm nhiệm vụ để tính chuỗi"))}
           </div>
         `;
         container.appendChild(card);
