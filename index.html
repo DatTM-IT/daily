@@ -863,9 +863,40 @@
       month: 'numeric', 
       day: 'numeric' 
     });
-
+    
     checkDailyReset();
     render();
   </script>
+  <!-- Modal Profile -->
+  <div id="profileModal" class="modal-overlay">
+    <div class="profile-card">
+      <button class="close-btn" onclick="closeProfile()">✕</button>
+      
+      <div class="profile-header-info">
+        <img id="profileAvatar" src="" alt="Avatar" class="profile-avatar-large">
+        <h2 id="profileName">Tên người dùng</h2>
+        <p id="profileEmail">email@example.com</p>
+      </div>
+
+      <div class="profile-bio-section">
+        <label for="bioInput">Tiểu sử (Bio)</label>
+        <textarea id="bioInput" placeholder="Ví dụ: Sinh viên PTIT, Founder Ledneon..."></textarea>
+        <button class="btn-save-bio" onclick="saveBio()">Lưu tiểu sử</button>
+      </div>
+
+      <div class="profile-stats">
+        <div class="stat-box">
+          <span class="stat-value" id="statTopics">0</span>
+          <span class="stat-label">Chủ đề</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value" id="statMaxStreak">0</span>
+          <span class="stat-label">Chuỗi max (ngày)</span>
+        </div>
+      </div>
+      
+      <button class="btn-logout-full" onclick="logoutGoogle()">Đăng xuất khỏi thiết bị</button>
+    </div>
+  </div>
 </body>
 </html>
