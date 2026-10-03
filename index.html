@@ -556,6 +556,48 @@
   <button class="fab-btn" title="Thêm chủ đề mới" onclick="promptAddTopic()">+</button>
 
   <script>
+    // === CÁC HÀM XỬ LÝ PROFILE ===
+    let userBio = ""; // Biến lưu trữ bio
+
+    function openProfile() {
+      if (!currentUser) return;
+      
+      // Hiển thị thông tin cơ bản
+      document.getElementById('profileAvatar').src = currentUser.photoURL || 'https://via.placeholder.com/80';
+      document.getElementById('profileName').textContent = currentUser.displayName || 'Người dùng ẩn danh';
+      document.getElementById('profileEmail').textContent = currentUser.email || '';
+      
+      // Tính toán thống kê
+      const totalTopics = state.length;
+      let maxStreak = 0;
+      state.forEach(t => { if (t.streak > maxStreak) maxStreak = t.streak; });
+      
+      document.getElementById('statTopics').textContent = totalTopics;
+      document.getElementById('statMaxStreak').textContent = maxStreak;
+      document.getElementById('bioInput').value = userBio;
+
+      // Mở modal
+      document.getElementById('profileModal').classList.add('active');
+    }
+
+    function closeProfile() {
+      document.getElementById('profileModal').classList.remove('active');
+    }
+
+    function saveBio() {
+      if (!currentUser) return;
+      const newBio = document.getElementById('bioInput').value.trim();
+      userBio = newBio;
+      
+      // Lưu lên Firebase
+      db.collection("users").doc(currentUser.uid).set({
+        bio: userBio
+      }, { merge: true }).then(() => {
+        alert("Đã lưu tiểu sử!");
+      }).catch(err => {
+        console.error("Lỗi khi lưu bio:", err);
+      });
+    }
     const firebaseConfig = {
       apiKey: "AIzaSyCf2UU60vwjb8my6Hw6y6S4a6-VbK5rwFc",
       authDomain: "daily-a9522.firebaseapp.com",
