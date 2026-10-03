@@ -20,6 +20,103 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
   <style>
+    /* CSS cho Profile Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .profile-card {
+      background: #ffffff;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 28px;
+      padding: 24px;
+      position: relative;
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    .modal-overlay.active .profile-card {
+      transform: translateY(0);
+    }
+    .close-btn {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: #f1f5f9;
+      border: none;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      color: #64748b;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .profile-header-info {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .profile-avatar-large {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      border: 3px solid #0ea5e9;
+      padding: 3px;
+      margin-bottom: 12px;
+    }
+    .profile-header-info h2 { font-size: 1.25rem; color: #0f172a; margin-bottom: 4px; }
+    .profile-header-info p { font-size: 0.85rem; color: #64748b; }
+    
+    .profile-bio-section {
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+    }
+    .profile-bio-section label { display: block; font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 8px; }
+    .profile-bio-section textarea {
+      width: 100%;
+      background: transparent;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 0.85rem;
+      resize: none;
+      min-height: 60px;
+      margin-bottom: 10px;
+    }
+    .btn-save-bio {
+      background: #0ea5e9; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: pointer; width: 100%;
+    }
+    
+    .profile-stats {
+      display: flex; gap: 12px; margin-bottom: 20px;
+    }
+    .stat-box {
+      flex: 1;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 16px;
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-value { display: block; font-size: 1.5rem; font-weight: 900; color: #d97706; }
+    .stat-label { font-size: 0.75rem; font-weight: 700; color: #92400e; }
+    
+    .btn-logout-full {
+      width: 100%; padding: 12px; background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; border-radius: 14px; font-weight: 700; cursor: pointer;
+    }
     :root {
       --bg: #f8fafc;
       --card-bg: rgba(255, 255, 255, 0.95);
